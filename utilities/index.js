@@ -59,5 +59,23 @@ Util.buildClassificationGrid = async function(data){
     return grid
   }
 
+Util.buildDetailView = function(vehicle) {
+  if (!vehicle) return "<p class='notice'>Vehicle not found.</p>";
+  return `
+    <div class="vehicle-detail">
+      <div class="vehicle-image">
+        <img src="${vehicle.inv_image}" alt="Image of ${vehicle.inv_make} ${vehicle.inv_model} on CSE Motors" />
+      </div>
+      <div class="vehicle-info">
+        <h2>${vehicle.inv_make} ${vehicle.inv_model} Details</h2>
+        <p class="price"><strong>Price:</strong> $${Number(vehicle.inv_price).toLocaleString("en-US")}</p>
+        <p><strong>Description:</strong> ${vehicle.inv_description}</p>
+        <p><strong>Color:</strong> ${vehicle.inv_color}</p>
+        <p><strong>Miles:</strong> ${Number(vehicle.inv_miles).toLocaleString("en-US")}</p>
+      </div>
+    </div>
+  `;
+}
+
 
 module.exports = Util 

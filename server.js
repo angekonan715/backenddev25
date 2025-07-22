@@ -9,7 +9,6 @@ const express = require("express")
 const expressLayouts = require("express-ejs-layouts") // we tell the application to require express-ejs-layouts, so it can be used.
 const env = require("dotenv").config()
 const app = express()
-const static = require("./routes/static")
 const baseController = require("./controllers/baseController")
 const inventoryRoute = require("./routes/inventoryRoute")
 
@@ -25,12 +24,48 @@ app.set("layout", "layouts/layout") // not at views root :
 /* ***********************
  * Routes
  *************************/
-app.use(static)
 app.use(express.static("public"))
 // Index Route
 app.get("/", baseController.buildHome)
 // Inventory routes
 app.use("/inv", inventoryRoute)
+
+// 404 handler
+app.use(async (req, res, next) => {
+  try {
+    const utilities = require("./utilities/");
+    const nav = await utilities.getNav();
+    res.status(404).render("error", { 
+      title: "404 Not Found", 
+      message: "Page not found.",
+      nav 
+    });
+  } catch (error) {
+    res.status(404).render("error", { 
+      title: "404 Not Found", 
+      message: "Page not found." 
+    });
+  }
+});
+
+// Error handler
+app.use(async (err, req, res, next) => {
+  console.error(err.stack);
+  try {
+    const utilities = require("./utilities/");
+    const nav = await utilities.getNav();
+    res.status(500).render("error", { 
+      title: "Server Error", 
+      message: "Something went wrong!",
+      nav 
+    });
+  } catch (error) {
+    res.status(500).render("error", { 
+      title: "Server Error", 
+      message: "Something went wrong!" 
+    });
+  }
+});
 
 /* ***********************
  * Local Server Information
