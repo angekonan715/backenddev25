@@ -8,10 +8,19 @@
 const express = require("express")
 const expressLayouts = require("express-ejs-layouts") // we tell the application to require express-ejs-layouts, so it can be used.
 const env = require("dotenv").config()
+// Set default environment variables if not present
+if (!process.env.ACCESS_TOKEN_SECRET) {
+  process.env.ACCESS_TOKEN_SECRET = "your-super-secret-jwt-key-here"
+}
+if (!process.env.SESSION_SECRET) {
+  process.env.SESSION_SECRET = "your-super-secret-session-key-here"
+}
 const session = require("express-session")
 const pool = require('./database/')
 const bodyParser = require("body-parser")
+const cookieParser = require("cookie-parser")
 const app = express()
+const utilities = require("./utilities/")
 const baseController = require("./controllers/baseController")
 const inventoryRoute = require("./routes/inventoryRoute")
 const accountRoute = require("./routes/accountRoute")
@@ -40,6 +49,8 @@ app.use(function(req, res, next){
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+app.use(cookieParser())
+app.use(utilities.checkJWTToken)
 
 /* ***********************
  * View Engine and Templates
