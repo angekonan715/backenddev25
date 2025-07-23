@@ -26,6 +26,18 @@
                         <% } %>
 
                             <div class="content">
-                                <p>You're logged in.</p>
+                                <% if (locals.account_type==="Client" ) { %>
+                                    <h2>Welcome <%= locals.account_firstname %>
+                                    </h2>
+                                    <% } else { %>
+                                        <h2>Welcome <%= locals.account_firstname %>
+                                        </h2>
+                                        <h3>Inventory Management</h3>
+                                        <p><a href="/inv/" title="Manage Inventory">Manage Inventory</a></p>
+                                        <% } %>
+
+                                            <p><a href="/account/update/<%= locals.account_id %>"
+                                                    title="Update Account Information">Update Account Information</a>
+                                            </p>
                             </div>
 </div>

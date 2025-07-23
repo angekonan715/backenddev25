@@ -65,9 +65,9 @@ app.set("layout", "layouts/layout") // not at views root :
  *************************/
 app.use(express.static("public"))
 // Index Route
-app.get("/", baseController.buildHome)
+app.get("/", utilities.handleErrors(baseController.buildHome))
 // Error test route (Task 3)
-app.get("/error-test", baseController.triggerError)
+app.get("/error-test", utilities.handleErrors(baseController.triggerError))
 // Inventory routes
 app.use("/inv", inventoryRoute)
 // Account routes

@@ -9,7 +9,10 @@ baseController.buildHome = async function(req, res){
 
 baseController.triggerError = async function(req, res, next) {
   // Intentionally throw an error to test error handling
-  throw new Error("Intentional error for testing purposes")
+  // This error will be caught by the error handling middleware
+  const error = new Error("Intentional error for testing purposes")
+  error.status = 500
+  next(error)
 }
 
 module.exports = baseController 

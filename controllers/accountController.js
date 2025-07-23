@@ -121,11 +121,118 @@ async function accountLogin(req, res) {
 * ************************************ */
 async function buildAccountManagement(req, res, next) {
   let nav = await utilities.getNav()
+  const accountData = await accountModel.getAccountById(res.locals.accountData.account_id)
   res.render("account/account-management", {
     title: "Account Management",
     nav,
-    errors: null
+    errors: null,
+    account_firstname: accountData.account_firstname,
+    account_lastname: accountData.account_lastname,
+    account_email: accountData.account_email,
+    account_type: accountData.account_type,
+    account_id: accountData.account_id
   })
 }
 
-module.exports = { buildLogin, buildRegister, registerAccount, accountLogin, buildAccountManagement } 
+/* ****************************************
+*  Deliver account update view
+* ************************************ */
+async function buildAccountUpdate(req, res, next) {
+  let nav = await utilities.getNav()
+  const account_id = parseInt(req.params.account_id)
+  const accountData = await accountModel.getAccountById(account_id)
+  
+  // Check if user is updating their own account
+  if (account_id !== res.locals.accountData.account_id) {
+    req.flash("notice", "You can only update your own account.")
+    return res.redirect("/account/")
+  }
+  
+  res.render("account/update-account", {
+    title: "Update Account",
+    nav,
+    errors: null,
+    account_firstname: accountData.account_firstname,
+    account_lastname: accountData.account_lastname,
+    account_email: accountData.account_email,
+    account_id: accountData.account_id
+  })
+}
+
+/* ****************************************
+*  Process account update
+* ************************************ */
+async function updateAccount(req, res, next) {
+  let nav = await utilities.getNav()
+  const { account_id, account_firstname, account_lastname, account_email } = req.body
+  
+  // Check if user is updating their own account
+  if (parseInt(account_id) !== res.locals.accountData.account_id) {
+    req.flash("notice", "You can only update your own account.")
+    return res.redirect("/account/")
+  }
+  
+  // Check if email already exists (if email is being changed)
+  const currentAccount = await accountModel.getAccountById(account_id)
+  if (currentAccount.account_email !== account_email) {
+    const emailExists = await accountModel.checkExistingEmail(account_email)
+    if (emailExists > 0) {
+      req.flash("notice", "Email address already exists.")
+      return res.redirect(`/account/update/${account_id}`)
+    }
+  }
+  
+  const updateResult = await accountModel.updateAccount(account_id, account_firstname, account_lastname, account_email)
+  
+  if (updateResult) {
+    req.flash("notice", "Account information updated successfully.")
+  } else {
+    req.flash("notice", "Account update failed.")
+  }
+  
+  res.redirect("/account/")
+}
+
+/* ****************************************
+*  Process password change
+* ************************************ */
+async function changePassword(req, res, next) {
+  let nav = await utilities.getNav()
+  const { account_id, account_password } = req.body
+  
+  // Check if user is updating their own account
+  if (parseInt(account_id) !== res.locals.accountData.account_id) {
+    req.flash("notice", "You can only update your own account.")
+    return res.redirect("/account/")
+  }
+  
+  // Hash the password
+  let hashedPassword
+  try {
+    hashedPassword = await bcrypt.hash(account_password, 10)
+  } catch (error) {
+    req.flash("notice", "Sorry, there was an error processing the password change.")
+    return res.redirect(`/account/update/${account_id}`)
+  }
+  
+  const updateResult = await accountModel.updatePassword(account_id, hashedPassword)
+  
+  if (updateResult) {
+    req.flash("notice", "Password updated successfully.")
+  } else {
+    req.flash("notice", "Password update failed.")
+  }
+  
+  res.redirect("/account/")
+}
+
+/* ****************************************
+*  Process logout
+* ************************************ */
+async function logout(req, res, next) {
+  res.clearCookie("jwt")
+  req.flash("notice", "You have been logged out.")
+  res.redirect("/")
+}
+
+module.exports = { buildLogin, buildRegister, registerAccount, accountLogin, buildAccountManagement, buildAccountUpdate, updateAccount, changePassword, logout } 

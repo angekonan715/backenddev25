@@ -122,6 +122,8 @@ Util.checkJWTToken = (req, res, next) => {
     }
     res.locals.accountData = accountData
     res.locals.loggedin = 1
+    res.locals.account_firstname = accountData.account_firstname
+    res.locals.account_type = accountData.account_type
     next()
    })
  } else {
@@ -137,6 +139,18 @@ Util.checkLogin = (req, res, next) => {
     next()
   } else {
     req.flash("notice", "Please log in.")
+    return res.redirect("/account/login")
+  }
+}
+
+/* ****************************************
+ *  Check Account Type
+ * ************************************ */
+Util.checkAccountType = (req, res, next) => {
+  if (res.locals.account_type === "Employee" || res.locals.account_type === "Admin") {
+    next()
+  } else {
+    req.flash("notice", "Access denied. Employee or Admin privileges required.")
     return res.redirect("/account/login")
   }
 }
