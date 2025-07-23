@@ -1,0 +1,26 @@
+<h1>Inventory Management</h1>
+
+<% if (locals.message) { %>
+    <div
+        class="notice <%= locals.message.includes('required') || locals.message.includes('cannot contain') || locals.message.includes('failed') ? 'error' : '' %>">
+        <p>
+            <%= message %>
+        </p>
+    </div>
+    <% } %>
+
+        <div class="management-links">
+            <h2>Inventory Management Options</h2>
+
+            <div class="management-card">
+                <h3>Add New Classification</h3>
+                <p>Add a new vehicle classification to the system.</p>
+                <a href="/inv/add-classification" class="btn btn-primary">Add Classification</a>
+            </div>
+
+            <div class="management-card">
+                <h3>Add New Inventory Item</h3>
+                <p>Add a new vehicle to the inventory system.</p>
+                <a href="/inv/add-inventory" class="btn btn-primary">Add Inventory Item</a>
+            </div>
+        </div>
