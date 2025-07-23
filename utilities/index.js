@@ -141,4 +141,87 @@ Util.checkLogin = (req, res, next) => {
   }
 }
 
+/* ************************
+ *  Check Inventory Data
+ * ************************** */
+Util.checkInventoryData = async function (req, res, next) {
+  const { 
+    inv_make, 
+    inv_model, 
+    inv_year, 
+    inv_description, 
+    inv_image, 
+    inv_thumbnail, 
+    inv_price, 
+    inv_miles, 
+    inv_color, 
+    classification_id 
+  } = req.body
+
+  if (!inv_make || !inv_model || !inv_year || !inv_description || !inv_image || !inv_thumbnail || !inv_price || !inv_miles || !inv_color || !classification_id) {
+    req.flash("notice", "Please check your input and try again.")
+    res.status(400).render("inventory/add-inventory", {
+      title: "Add Inventory",
+      nav: await utilities.getNav(),
+      classificationList: await utilities.buildClassificationList(classification_id),
+      errors: null,
+      message: req.flash('notice'),
+      inv_make,
+      inv_model,
+      inv_year,
+      inv_description,
+      inv_image,
+      inv_thumbnail,
+      inv_price,
+      inv_miles,
+      inv_color
+    })
+    return
+  }
+  next()
+}
+
+/* ************************
+ *  Check Update Data
+ * ************************** */
+Util.checkUpdateData = async function (req, res, next) {
+  const { 
+    inv_id,
+    inv_make, 
+    inv_model, 
+    inv_year, 
+    inv_description, 
+    inv_image, 
+    inv_thumbnail, 
+    inv_price, 
+    inv_miles, 
+    inv_color, 
+    classification_id 
+  } = req.body
+
+  if (!inv_id || !inv_make || !inv_model || !inv_year || !inv_description || !inv_image || !inv_thumbnail || !inv_price || !inv_miles || !inv_color || !classification_id) {
+    req.flash("notice", "Please check your input and try again.")
+    res.status(400).render("inventory/edit-inventory", {
+      title: "Edit Inventory",
+      nav: await utilities.getNav(),
+      classificationSelect: await utilities.buildClassificationList(classification_id),
+      errors: null,
+      message: req.flash('notice'),
+      inv_id,
+      inv_make,
+      inv_model,
+      inv_year,
+      inv_description,
+      inv_image,
+      inv_thumbnail,
+      inv_price,
+      inv_miles,
+      inv_color,
+      classification_id
+    })
+    return
+  }
+  next()
+}
+
 module.exports = Util 
