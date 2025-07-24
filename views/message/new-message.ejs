@@ -1,0 +1,61 @@
+<h1>New Message</h1>
+
+<% if (locals.message) { %>
+    <div class="notice">
+        <p>
+            <%= message %>
+        </p>
+    </div>
+    <% } %>
+
+        <% if (locals.errors) { %>
+            <ul class="notice error">
+                <% errors.array().forEach(error=> { %>
+                    <li>
+                        <%= error.msg %>
+                    </li>
+                    <% }) %>
+            </ul>
+            <% } %>
+
+                <form id="newMessageForm" action="/message/send" method="post">
+                    <fieldset>
+                        <legend>Compose Message</legend>
+
+                        <div class="form-group">
+                            <label for="message_to">To:</label>
+                            <select name="message_to" id="message_to" required>
+                                <option value="">Select Recipient</option>
+                                <% if (typeof accounts !=='undefined' && accounts) { %>
+                                    <% accounts.forEach(account=> { %>
+                                        <% if (account.account_id !==locals.accountData.account_id) { %>
+                                            <option value="<%= account.account_id %>">
+                                                <%= account.account_firstname %>
+                                                    <%= account.account_lastname %> (<%= account.account_type %>)
+                                            </option>
+                                            <% } %>
+                                                <% }) %>
+                                                    <% } %>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message_subject">Subject:</label>
+                            <input type="text" name="message_subject" id="message_subject" required
+                                value="<%= locals.message_subject || '' %>" maxlength="255">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message_body">Message:</label>
+                            <textarea name="message_body" id="message_body" required rows="8"
+                                placeholder="Type your message here..."><%= locals.message_body || '' %></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="submit" value="Send Message" class="btn btn-primary">
+                            <a href="/message/" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </fieldset>
+                </form>
+
+                <script src="../../js/message-validation.js"></script>

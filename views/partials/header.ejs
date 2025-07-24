@@ -5,6 +5,12 @@
     <div id="tools">
         <% if (locals.loggedin) { %>
             <a title="Welcome <%= locals.account_firstname %>" href="/account/">Welcome <%= locals.account_firstname %>
+                    </a>
+            <a title="Messages" href="/message/">
+                Messages
+                <% if (locals.unreadMessageCount && locals.unreadMessageCount> 0) { %>
+                    <span class="message-badge">(<%= locals.unreadMessageCount %>)</span>
+                    <% } %>
             </a>
             <a title="Click to log out" href="/account/logout">Logout</a>
             <% } else { %>

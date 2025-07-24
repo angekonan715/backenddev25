@@ -25,6 +25,7 @@ const baseController = require("./controllers/baseController")
 const inventoryRoute = require("./routes/inventoryRoute")
 const accountRoute = require("./routes/accountRoute")
 const reviewRoute = require("./routes/reviewRoute")
+const messageRoute = require("./routes/messageRoute")
 
 
 /* ***********************
@@ -75,6 +76,8 @@ app.use("/inv", inventoryRoute)
 app.use("/account", accountRoute)
 // Review routes
 app.use("/review", reviewRoute)
+// Message routes
+app.use("/message", messageRoute)
 
 // 404 handler
 app.use(async (req, res, next) => {

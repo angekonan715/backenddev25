@@ -109,12 +109,12 @@ Util.handleErrors = function(fn) {
 /* ****************************************
 * Middleware to check token validity
 **************************************** */
-Util.checkJWTToken = (req, res, next) => {
+Util.checkJWTToken = async (req, res, next) => {
  if (req.cookies.jwt) {
   jwt.verify(
    req.cookies.jwt,
    process.env.ACCESS_TOKEN_SECRET,
-   function (err, accountData) {
+   async function (err, accountData) {
     if (err) {
      req.flash("Please log in")
      res.clearCookie("jwt")
@@ -124,9 +124,20 @@ Util.checkJWTToken = (req, res, next) => {
     res.locals.loggedin = 1
     res.locals.account_firstname = accountData.account_firstname
     res.locals.account_type = accountData.account_type
+    
+    // Get unread message count
+    try {
+      const messageModel = require("../models/message-model")
+      res.locals.unreadMessageCount = await messageModel.getUnreadMessageCount(accountData.account_id)
+    } catch (error) {
+      console.error("Error getting unread message count:", error)
+      res.locals.unreadMessageCount = 0
+    }
+    
     next()
    })
  } else {
+  res.locals.unreadMessageCount = 0
   next()
  }
 }
