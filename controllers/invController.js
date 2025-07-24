@@ -140,9 +140,11 @@ invCont.addClassification = async function (req, res, next) {
 
     if (result) {
       req.flash("notice", `The ${classification_name} classification was successfully added.`)
+      let classificationSelect = await utilities.buildClassificationList()
       res.status(201).render("./inventory/management", {
         title: "Inventory Management",
         nav,
+        classificationSelect,
         message: req.flash('notice')
       })
     } else {
@@ -217,9 +219,11 @@ invCont.addInventory = async function (req, res, next) {
 
     if (result) {
       req.flash("notice", `The ${inv_make} ${inv_model} was successfully added.`)
+      let classificationSelect = await utilities.buildClassificationList()
       res.status(201).render("./inventory/management", {
         title: "Inventory Management",
         nav,
+        classificationSelect,
         message: req.flash('notice')
       })
     } else {
