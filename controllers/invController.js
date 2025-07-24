@@ -1,4 +1,5 @@
 const invModel = require("../models/inventory-model")
+const reviewModel = require("../models/review-model")
 const utilities = require("../utilities/")
 
 const invCont = {}
@@ -49,13 +50,24 @@ invCont.buildByInventoryId = async function (req, res, next) {
       return res.redirect("/");
     }
     
+    // Get reviews for this vehicle
+    let reviews = []
+    try {
+      reviews = await reviewModel.getReviewsByInventoryId(inv_id);
+    } catch (reviewError) {
+      console.error("Error fetching reviews:", reviewError);
+      // Continue without reviews if there's an error
+    }
+    
     let nav = await utilities.getNav();
     console.log("Navigation generated:", nav ? "Yes" : "No");
     
     res.render("./inventory/detail", {
       title: `${data.inv_year} ${data.inv_make} ${data.inv_model}`,
       nav,
-      vehicle: data
+      vehicle: data,
+      reviews: reviews,
+      message: req.flash('notice')
     });
   } catch (error) {
     console.error("Error in buildByInventoryId:", error);
@@ -189,30 +201,52 @@ invCont.addInventory = async function (req, res, next) {
     classification_id 
   } = req.body
 
-  const result = await invModel.addInventory(
-    inv_make, 
-    inv_model, 
-    inv_year, 
-    inv_description, 
-    inv_image, 
-    inv_thumbnail, 
-    inv_price, 
-    inv_miles, 
-    inv_color, 
-    classification_id
-  )
+  try {
+    const result = await invModel.addInventory(
+      inv_make, 
+      inv_model, 
+      inv_year, 
+      inv_description, 
+      inv_image, 
+      inv_thumbnail, 
+      inv_price, 
+      inv_miles, 
+      inv_color, 
+      classification_id
+    )
 
-  if (result) {
-    req.flash("notice", `The ${inv_make} ${inv_model} was successfully added.`)
-    res.status(201).render("./inventory/management", {
-      title: "Inventory Management",
-      nav,
-      message: req.flash('notice')
-    })
-  } else {
+    if (result) {
+      req.flash("notice", `The ${inv_make} ${inv_model} was successfully added.`)
+      res.status(201).render("./inventory/management", {
+        title: "Inventory Management",
+        nav,
+        message: req.flash('notice')
+      })
+    } else {
+      req.flash("notice", "Sorry, the inventory item failed to be added.")
+      let classificationList = await utilities.buildClassificationList(classification_id)
+      res.status(501).render("./inventory/add-inventory", {
+        title: "Add Inventory",
+        nav,
+        classificationList,
+        errors: null,
+        message: req.flash('notice'),
+        inv_make,
+        inv_model,
+        inv_year,
+        inv_description,
+        inv_image,
+        inv_thumbnail,
+        inv_price,
+        inv_miles,
+        inv_color
+      })
+    }
+  } catch (error) {
+    console.error("Error adding inventory:", error)
     req.flash("notice", "Sorry, the inventory item failed to be added.")
     let classificationList = await utilities.buildClassificationList(classification_id)
-    res.status(501).render("./inventory/add-inventory", {
+    res.status(500).render("./inventory/add-inventory", {
       title: "Add Inventory",
       nav,
       classificationList,

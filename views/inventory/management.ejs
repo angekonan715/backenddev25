@@ -1,4 +1,4 @@
-<h1>Inventory Management</h1>
+<h1>Vehicle Management</h1>
 
 <% if (locals.message) { %>
     <div
@@ -9,24 +9,13 @@
     </div>
     <% } %>
 
-        <div class="management-links">
-            <h2>Inventory Management Options</h2>
-
-            <div class="management-card">
-                <h3>Add New Classification</h3>
-                <p>Add a new vehicle classification to the system.</p>
-                <a href="/inv/add-classification" class="btn btn-primary">Add Classification</a>
-            </div>
-
-            <div class="management-card">
-                <h3>Add New Inventory Item</h3>
-                <p>Add a new vehicle to the inventory system.</p>
-                <a href="/inv/add-inventory" class="btn btn-primary">Add Inventory Item</a>
-            </div>
+        <div class="management-section">
+            <a href="/inv/add-classification" class="management-link">Add New Classification</a>
+            <a href="/inv/add-inventory" class="management-link">Add New Vehicle</a>
         </div>
 
         <h2>Manage Inventory</h2>
-        <p>Select a classification from the list to see the items belonging to the classification.</p>
+        <p>Choose a classification to see those inventory items.</p>
 
         <%- classificationSelect %>
 

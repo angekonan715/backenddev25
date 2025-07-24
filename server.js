@@ -24,6 +24,7 @@ const utilities = require("./utilities/")
 const baseController = require("./controllers/baseController")
 const inventoryRoute = require("./routes/inventoryRoute")
 const accountRoute = require("./routes/accountRoute")
+const reviewRoute = require("./routes/reviewRoute")
 
 
 /* ***********************
@@ -72,6 +73,8 @@ app.get("/error-test", utilities.handleErrors(baseController.triggerError))
 app.use("/inv", inventoryRoute)
 // Account routes
 app.use("/account", accountRoute)
+// Review routes
+app.use("/review", reviewRoute)
 
 // 404 handler
 app.use(async (req, res, next) => {

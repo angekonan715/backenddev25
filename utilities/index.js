@@ -176,8 +176,8 @@ Util.checkInventoryData = async function (req, res, next) {
     req.flash("notice", "Please check your input and try again.")
     res.status(400).render("inventory/add-inventory", {
       title: "Add Inventory",
-      nav: await utilities.getNav(),
-      classificationList: await utilities.buildClassificationList(classification_id),
+      nav: await Util.getNav(),
+      classificationList: await Util.buildClassificationList(classification_id),
       errors: null,
       message: req.flash('notice'),
       inv_make,
@@ -217,8 +217,8 @@ Util.checkUpdateData = async function (req, res, next) {
     req.flash("notice", "Please check your input and try again.")
     res.status(400).render("inventory/edit-inventory", {
       title: "Edit Inventory",
-      nav: await utilities.getNav(),
-      classificationSelect: await utilities.buildClassificationList(classification_id),
+      nav: await Util.getNav(),
+      classificationSelect: await Util.buildClassificationList(classification_id),
       errors: null,
       message: req.flash('notice'),
       inv_id,

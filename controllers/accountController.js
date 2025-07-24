@@ -1,5 +1,6 @@
 const utilities = require("../utilities/")
 const accountModel = require("../models/account-model")
+const reviewModel = require("../models/review-model")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 require("dotenv").config()
@@ -120,18 +121,40 @@ async function accountLogin(req, res) {
 *  Deliver account management view
 * ************************************ */
 async function buildAccountManagement(req, res, next) {
-  let nav = await utilities.getNav()
-  const accountData = await accountModel.getAccountById(res.locals.accountData.account_id)
-  res.render("account/account-management", {
-    title: "Account Management",
-    nav,
-    errors: null,
-    account_firstname: accountData.account_firstname,
-    account_lastname: accountData.account_lastname,
-    account_email: accountData.account_email,
-    account_type: accountData.account_type,
-    account_id: accountData.account_id
-  })
+  try {
+    let nav = await utilities.getNav()
+    const accountData = await accountModel.getAccountById(res.locals.accountData.account_id)
+    
+    // If user is a manager, redirect to inventory management
+    if (accountData.account_type === 'Manager') {
+      return res.redirect("/inv/")
+    }
+    
+    // Get user's reviews
+    let userReviews = []
+    try {
+      userReviews = await reviewModel.getReviewsByAccountId(res.locals.accountData.account_id)
+    } catch (reviewError) {
+      console.error("Error fetching user reviews:", reviewError)
+      // Continue without reviews if there's an error
+    }
+    
+    res.render("account/account-management", {
+      title: "Account Management",
+      nav,
+      errors: null,
+      account_firstname: accountData.account_firstname,
+      account_lastname: accountData.account_lastname,
+      account_email: accountData.account_email,
+      account_type: accountData.account_type,
+      account_id: accountData.account_id,
+      userReviews: userReviews,
+      message: req.flash('notice')
+    })
+  } catch (error) {
+    console.error("Error in buildAccountManagement:", error)
+    next(error)
+  }
 }
 
 /* ****************************************
