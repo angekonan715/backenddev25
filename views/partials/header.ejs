@@ -4,17 +4,19 @@
     </span>
     <div id="tools">
         <% if (locals.loggedin) { %>
-            <a title="Welcome <%= locals.account_firstname %>" href="/account/">Welcome <%= locals.account_firstname %>
-                    </a>
-            <a title="Messages" href="/message/">
+            <a title="Welcome <%= locals.account_firstname %>" href="/account/" class="header-link">Welcome <%=
+                    locals.account_firstname %></a>
+            <span class="header-separator">|</span>
+            <a title="Messages" href="/message/" class="header-link">
                 Messages
                 <% if (locals.unreadMessageCount && locals.unreadMessageCount> 0) { %>
                     <span class="message-badge">(<%= locals.unreadMessageCount %>)</span>
                     <% } %>
             </a>
-            <a title="Click to log out" href="/account/logout">Logout</a>
+            <span class="header-separator">|</span>
+            <a title="Click to log out" href="/account/logout" class="header-link">Logout</a>
             <% } else { %>
-                <a title="Click to log in" href="/account/login">My Account</a>
+                <a title="Click to log in" href="/account/login" class="header-link">My Account</a>
                 <% } %>
     </div>
 </header>

@@ -33,11 +33,37 @@ header#top-header {
   font-weight: bold;
   text-decoration: none;
 }
+#tools {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 #tools a {
   color: #b3e5fc;
   text-decoration: none;
   font-size: 1rem;
   font-weight: 500;
+}
+
+.header-link {
+  color: #b3e5fc;
+  text-decoration: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.header-link:hover {
+  background-color: rgba(179, 229, 252, 0.1);
+  text-decoration: none;
+  color: #b3e5fc;
+}
+
+.header-separator {
+  color: #ccc;
+  font-weight: bold;
+  margin: 0 0.25rem;
 }
 nav {
   background: #2d3540;
