@@ -1,6 +1,7 @@
 const invModel = require("../models/inventory-model")
 const reviewModel = require("../models/review-model")
 const utilities = require("../utilities/")
+const studentDiscount = require("../utilities/student-discount")
 
 const invCont = {}
 
@@ -10,7 +11,14 @@ const invCont = {}
 invCont.buildByClassificationId = async function (req, res, next) {
   const classification_id = req.params.classificationId
   const data = await invModel.getInventoryByClassificationId(classification_id)
-  const grid = await utilities.buildClassificationGrid(data)
+  
+  // Check for student discount eligibility
+  let isStudent = false
+  if (res.locals.accountData && studentDiscount.isStudentDiscountValid(res.locals.accountData)) {
+    isStudent = true
+  }
+  
+  const grid = await utilities.buildClassificationGrid(data, isStudent)
   let nav = await utilities.getNav()
   
   // Handle case where no vehicles are found
@@ -34,6 +42,8 @@ invCont.buildByClassificationId = async function (req, res, next) {
     title: className + " vehicles",
     nav,
     grid,
+    isStudent: isStudent,
+    studentDiscountInfo: isStudent ? studentDiscount.getStudentDiscountInfo() : null
   })
 }
 
@@ -59,6 +69,16 @@ invCont.buildByInventoryId = async function (req, res, next) {
       // Continue without reviews if there's an error
     }
     
+    // Check for student discount eligibility
+    let isStudent = false
+    let priceInfo = null
+    if (res.locals.accountData && studentDiscount.isStudentDiscountValid(res.locals.accountData)) {
+      isStudent = true
+    }
+    
+    // Calculate pricing with potential student discount
+    priceInfo = studentDiscount.formatStudentPrice(data.inv_price, isStudent)
+    
     let nav = await utilities.getNav();
     console.log("Navigation generated:", nav ? "Yes" : "No");
     
@@ -67,6 +87,9 @@ invCont.buildByInventoryId = async function (req, res, next) {
       nav,
       vehicle: data,
       reviews: reviews,
+      priceInfo: priceInfo,
+      isStudent: isStudent,
+      studentDiscountInfo: studentDiscount.getStudentDiscountInfo(),
       message: req.flash('notice')
     });
   } catch (error) {

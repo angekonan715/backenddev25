@@ -1,0 +1,194 @@
+/* Student Discount Styles */
+
+.student-section {
+    background: linear-gradient(135deg, #f8f9ff 0%, #e8f2ff 100%);
+    border: 2px solid #4CAF50;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.student-header h3,
+.student-header h4 {
+    color: #2E7D32;
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+}
+
+.student-header p {
+    color: #388E3C;
+    margin: 0 0 15px 0;
+    font-weight: 500;
+}
+
+/* Student pricing display */
+.student-pricing {
+    background: #e8f5e8;
+    border: 1px solid #4CAF50;
+    border-radius: 6px;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.student-price {
+    font-size: 1.2em;
+    color: #2E7D32;
+    margin: 5px 0;
+}
+
+.discounted-price {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #1B5E20;
+}
+
+.original-price {
+    color: #666;
+    margin: 5px 0;
+}
+
+.crossed-out {
+    text-decoration: line-through;
+    color: #999;
+}
+
+.savings-text {
+    color: #2E7D32;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.student-badge {
+    background: #4CAF50;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+/* Grid pricing styles */
+.pricing {
+    margin-top: 10px;
+}
+
+.student-price {
+    color: #2E7D32;
+    font-weight: bold;
+    font-size: 1.1em;
+    display: block;
+}
+
+.original-price {
+    color: #666;
+    font-size: 0.9em;
+    display: block;
+}
+
+.student-badge {
+    background: #4CAF50;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 5px;
+}
+
+/* Student info for non-students */
+.student-info {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 6px;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+.student-info p {
+    margin: 5px 0;
+    color: #856404;
+}
+
+.student-info em {
+    font-weight: 500;
+    color: #6c5700;
+}
+
+.student-info a {
+    color: #0066cc;
+    text-decoration: none;
+}
+
+.student-info a:hover {
+    text-decoration: underline;
+}
+
+/* Form styling */
+#student_email_group {
+    margin-top: 15px;
+}
+
+#student_email_group label {
+    font-weight: 500;
+    color: #2E7D32;
+}
+
+#student_email_group input[type="email"] {
+    border: 2px solid #81C784;
+    border-radius: 4px;
+    padding: 8px 12px;
+    width: 100%;
+    max-width: 300px;
+}
+
+#student_email_group input[type="email"]:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+#student_email_group small {
+    display: block;
+    margin-top: 5px;
+    color: #666;
+    font-size: 0.9em;
+}
+
+.verification-date {
+    color: #4CAF50 !important;
+    font-weight: 500;
+}
+
+/* Checkbox styling */
+input[type="checkbox"]#is_student {
+    transform: scale(1.2);
+    margin-right: 8px;
+    accent-color: #4CAF50;
+}
+
+label:has(input[type="checkbox"]#is_student) {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    color: #2E7D32;
+    cursor: pointer;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .student-section {
+        padding: 15px;
+        margin: 15px 0;
+    }
+    
+    .student-pricing {
+        padding: 12px;
+    }
+    
+    .discounted-price {
+        font-size: 1.2em;
+    }
+}
