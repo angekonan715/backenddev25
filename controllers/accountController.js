@@ -34,7 +34,25 @@ async function buildRegister(req, res, next) {
 * *************************************** */
 async function registerAccount(req, res) {
   let nav = await utilities.getNav()
-  const { account_firstname, account_lastname, account_email, account_password } = req.body
+  const { account_firstname, account_lastname, account_email, account_password, is_student, student_email } = req.body
+
+  // Validate student email if student status is requested
+  let studentStatus = false
+  let validatedStudentEmail = null
+  
+  if (is_student === 'true' || is_student === true) {
+    if (!student_email || !accountModel.isValidStudentEmail(student_email)) {
+      req.flash("notice", 'Please provide a valid .edu email address for student verification.')
+      res.status(400).render("account/register", {
+        title: "Registration",
+        nav,
+        errors: null,
+      })
+      return
+    }
+    studentStatus = true
+    validatedStudentEmail = student_email
+  }
 
   // Hash the password before storing
   let hashedPassword
@@ -55,14 +73,17 @@ async function registerAccount(req, res) {
     account_firstname,
     account_lastname,
     account_email,
-    hashedPassword
+    hashedPassword,
+    studentStatus,
+    validatedStudentEmail
   )
 
   if (regResult) {
-    req.flash(
-      "notice",
-      `Congratulations, you\'re registered ${account_firstname}. Please log in.`
-    )
+    let message = `Congratulations, you\'re registered ${account_firstname}. Please log in.`
+    if (studentStatus) {
+      message += ' Your student status has been verified and you\'ll receive 15% off eligible vehicles!'
+    }
+    req.flash("notice", message)
     res.status(201).render("account/login", {
       title: "Login",
       nav,
@@ -187,12 +208,28 @@ async function buildAccountUpdate(req, res, next) {
 * ************************************ */
 async function updateAccount(req, res, next) {
   let nav = await utilities.getNav()
-  const { account_id, account_firstname, account_lastname, account_email } = req.body
+  const { account_id, account_firstname, account_lastname, account_email, is_student, student_email } = req.body
   
   // Check if user is updating their own account
   if (parseInt(account_id) !== res.locals.accountData.account_id) {
     req.flash("notice", "You can only update your own account.")
     return res.redirect("/account/")
+  }
+  
+  // Validate student email if student status is requested
+  let studentStatus = null
+  let validatedStudentEmail = null
+  
+  if (is_student !== undefined) {
+    studentStatus = is_student === 'true' || is_student === true
+    
+    if (studentStatus) {
+      if (!student_email || !accountModel.isValidStudentEmail(student_email)) {
+        req.flash("notice", 'Please provide a valid .edu email address for student verification.')
+        return res.redirect(`/account/update/${account_id}`)
+      }
+      validatedStudentEmail = student_email
+    }
   }
   
   // Check if email already exists (if email is being changed)
@@ -205,10 +242,23 @@ async function updateAccount(req, res, next) {
     }
   }
   
-  const updateResult = await accountModel.updateAccount(account_id, account_firstname, account_lastname, account_email)
+  const updateResult = await accountModel.updateAccount(
+    account_id, 
+    account_firstname, 
+    account_lastname, 
+    account_email, 
+    studentStatus, 
+    validatedStudentEmail
+  )
   
   if (updateResult) {
-    req.flash("notice", "Account information updated successfully.")
+    let message = "Account information updated successfully."
+    if (studentStatus === true) {
+      message += " Student status verified - you'll now receive 15% off eligible vehicles!"
+    } else if (studentStatus === false) {
+      message += " Student status removed."
+    }
+    req.flash("notice", message)
   } else {
     req.flash("notice", "Account update failed.")
   }

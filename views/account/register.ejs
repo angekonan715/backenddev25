@@ -52,6 +52,33 @@
                         </div>
                     </div>
 
+                    <!-- Student Status Section -->
+                    <div class="form-group student-section">
+                        <div class="student-header">
+                            <h3>🎓 Student Discount</h3>
+                            <p>Save 15% on vehicles over $1,000 with a valid .edu email!</p>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" name="is_student" id="is_student" value="true" 
+                                       <%= locals.is_student ? 'checked' : '' %>>
+                                I am a student and want to apply for student discounts
+                            </label>
+                        </div>
+
+                        <div class="form-group" id="student_email_group" style="display: none;">
+                            <label for="student_email">Student Email (.edu required):</label>
+                            <input type="email" name="student_email" id="student_email" 
+                                   value="<%= locals.student_email %>"
+                                   placeholder="your.name@university.edu">
+                            <small>Please provide your .edu email address for verification</small>
+                        </div>
+                    </div>
+
                     <button type="submit" class="register-btn">Register</button>
                 </form>
             </div>
+
+<link rel="stylesheet" href="/css/student-discount.css">
+<script src="/js/student-discount.js"></script>

@@ -1,5 +1,6 @@
 const invModel = require("../models/inventory-model")
 const jwt = require("jsonwebtoken")
+const studentDiscount = require("./student-discount")
 require("dotenv").config()
 const Util = {}
 
@@ -31,7 +32,7 @@ Util.getNav = async function () {
 /* **************************************
 * Build the classification view HTML
 * ************************************ */
-Util.buildClassificationGrid = async function(data){
+Util.buildClassificationGrid = async function(data, isStudent = false){
     let grid = ""
     if(data && data.length > 0){
       grid = '<ul id="inv-display">'
@@ -49,8 +50,21 @@ Util.buildClassificationGrid = async function(data){
         + vehicle.inv_make + ' ' + vehicle.inv_model + ' details">' 
         + vehicle.inv_make + ' ' + vehicle.inv_model + '</a>'
         grid += '</h2>'
-        grid += '<span>$' 
-        + new Intl.NumberFormat('en-US').format(vehicle.inv_price) + '</span>'
+        
+        // Calculate student pricing if applicable
+        const priceInfo = studentDiscount.formatStudentPrice(vehicle.inv_price, isStudent)
+        
+        if (priceInfo.hasDiscount) {
+          grid += '<div class="pricing">'
+          grid += '<span class="student-price">' + priceInfo.displayPrice + '</span>'
+          grid += '<span class="original-price">Was: ' + priceInfo.originalPrice + '</span>'
+          grid += '<span class="student-badge">Student Discount</span>'
+          grid += '</div>'
+        } else {
+          grid += '<span>$' 
+          + new Intl.NumberFormat('en-US').format(vehicle.inv_price) + '</span>'
+        }
+        
         grid += '</div>'
         grid += '</li>'
       })

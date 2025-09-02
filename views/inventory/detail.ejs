@@ -22,8 +22,28 @@
                         <%= vehicle.inv_make %>
                             <%= vehicle.inv_model %> Details
                     </h2>
-                    <p><strong>Price:</strong> $<%= Number(vehicle.inv_price).toLocaleString() %>
-                    </p>
+                    
+                    <!-- Price Section with Student Discount -->
+                    <div class="price-section">
+                        <% if (typeof priceInfo !== 'undefined' && priceInfo && priceInfo.hasDiscount) { %>
+                            <div class="student-pricing">
+                                <p class="student-price"><strong>Your Student Price:</strong> <span class="discounted-price"><%= priceInfo.displayPrice %></span></p>
+                                <p class="original-price">Regular Price: <span class="crossed-out"><%= priceInfo.originalPrice %></span></p>
+                                <p class="savings-text"><strong><%= priceInfo.savingsText %></strong></p>
+                                <div class="student-badge">🎓 Student Discount Applied</div>
+                            </div>
+                        <% } else { %>
+                            <p><strong>Price:</strong> $<%= Number(vehicle.inv_price).toLocaleString() %></p>
+                            <% if (typeof isStudent !== 'undefined' && !isStudent && typeof studentDiscountInfo !== 'undefined') { %>
+                                <div class="student-info">
+                                    <p><em>Students save <%= studentDiscountInfo.discountPercentage %> on vehicles over $<%= studentDiscountInfo.minAmount.toLocaleString() %>!</em></p>
+                                    <% if (!locals.loggedin) { %>
+                                        <p><a href="/account/register">Register</a> or <a href="/account/login">Login</a> with a .edu email to qualify.</p>
+                                    <% } %>
+                                </div>
+                            <% } %>
+                        <% } %>
+                    </div>
                     <p><strong>Description:</strong>
                         <%= vehicle.inv_description %>
                     </p>
@@ -100,4 +120,5 @@
                 <p>Vehicle not found.</p>
                 <% } %>
 
+                    <link rel="stylesheet" href="../../css/student-discount.css">
                     <script src="../../js/review-validation.js"></script>
